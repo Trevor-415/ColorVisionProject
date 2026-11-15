@@ -3,6 +3,7 @@
 #include <vector>
 #include <istream>
 #include <iterator>
+#include <fstream> 
 using namespace std;
 
 void basicColorsTester();
@@ -99,38 +100,38 @@ void validityHexChecker(string& inputHexCode, vector<char> hexCheck)
 
     while (!validHex) 
     {
-        cout << "Enter the Hex Code (Don't use #): " << endl;
-        cin >> inputHexCode;
+      cout << "Enter the Hex Code (Don't use #): " << endl;
+      cin >> inputHexCode;
 
-        if (inputHexCode.length() != 6) 
-        {
-            cout << "Invalid Hex Code: Must be exactly 6 characters." << endl;
-        } 
-        else 
-        {
-            validHex = true;
+      if (inputHexCode.length() != 6) 
+      {
+        cout << "Invalid Hex Code: Must be exactly 6 characters." << endl;
+      } 
+      else 
+      {
+        validHex = true;
 
-            for (int g = 0; g < inputHexCode.length(); ++g) 
+        for (int g = 0; g < inputHexCode.length(); ++g) 
+        {
+          bool charIsValid = false;
+
+          for (int i = 0; i < hexCheck.size(); ++i) 
+          {
+            if (inputHexCode[g] == hexCheck[i]) 
             {
-                bool charIsValid = false;
-
-                for (int i = 0; i < hexCheck.size(); ++i) 
-                {
-                    if (inputHexCode[g] == hexCheck[i]) 
-                    {
-                        charIsValid = true;
-                        break; 
-                    }
-                }
-
-                if (!charIsValid) 
-                {
-                    validHex = false;
-                    cout << "Invalid Hex Code: '" << inputHexCode[g] << "' is not valid." << endl;
-                    break;
-                }
+              charIsValid = true;
+              break; 
             }
+          }
+
+          if (!charIsValid) 
+          {
+            validHex = false;
+            cout << "Invalid Hex Code: '" << inputHexCode[g] << "' is not valid." << endl;
+            break;
+          }
         }
+      }
     }
   };
 
@@ -219,7 +220,7 @@ RGB simulateColorBlindness(RGB c, string type)
 
 
 int main()
-  {
+{
   //bool
     bool check = true;
     bool entryTester = true;
@@ -307,7 +308,52 @@ int main()
             cout << "[CAUTION - Heavy Color Distortion]" << endl;
         }
       }
+
+    char saveChoice;
+    cout << endl << "Would you like to save these results to an output file? (y/n): ";
+    cin >> saveChoice;
+
+    if (saveChoice == 'y' || saveChoice == 'Y') 
+    {
+      ofstream outFile("ColorBlindnessReport.txt");
+      
+      if (outFile.is_open()) 
+      {
+        outFile << "Original Color: " << rgbToHex(original) << " (" << original.r << ", " << original.g << ", " << original.b << ")\n";
+        outFile << "--------------------------------------------------" << endl;
+
+        for (int i = 0; i < conditions.size(); i++) 
+        {
+          string type = conditions.at(i);
+          RGB sim = simulateColorBlindness(original, type);
+                
+          int dr = original.r - sim.r;
+          int dg = original.g - sim.g;
+          int db = original.b - sim.b;
+          int distSquared = (dr * dr) + (dg * dg) + (db * db);
+
+          outFile << type << "\t| Appears as: " << rgbToHex(sim) << "\t| ";
+
+          if (distSquared <= 4000) 
+          {
+            outFile << "[SAFE - Minimal Color Shift]" << endl;
+          } else if (distSquared <= 20000) 
+          {
+            outFile << "[MODERATE SHIFT]" << endl;
+          } else 
+          {
+            outFile << "[CAUTION - Heavy Color Distortion]" << endl;
+          }
+        }
+        outFile.close();
+        cout << "Success! Results saved to 'ColorBlindnessResults.txt'" << endl;
+      } 
+      else 
+      {
+        cout << "Error: Could not create the output file." << endl;
+      }
+    }
     }
   }
     return 0;
-  }
+}

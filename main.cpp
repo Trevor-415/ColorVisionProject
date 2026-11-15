@@ -262,9 +262,14 @@ int main()
         }
     }
 
-    cout << "Which tester will you be using?" << endl << "1. Basic Colors" << endl << "2. Hex Codes" << endl << "3. Enter a File" << endl;
+    cout << "Which Command Would You Like To Run?" << endl << "1. Basic Colors" << endl << "2. Hex Codes" << endl << "3. Shut Down" << endl;
     int selectTester;
     cin >> selectTester;
+    while(selectTester != 1 && selectTester != 2 && selectTester != 3)
+    {
+      cout << "That Command Does Not Exist" << endl << "Please Input a Valid Command" << endl;
+      cin >> selectTester;
+    }
 
     //BASIC COLORS TESTER
     if (selectTester == 1)
@@ -310,7 +315,7 @@ int main()
       }
 
     char saveChoice;
-    cout << endl << "Would you like to save these results to an output file? (y/n): ";
+    cout << endl << "Would You Like To Save These Results To An Output File? (y/n): ";
     cin >> saveChoice;
 
     if (saveChoice == 'y' || saveChoice == 'Y') 
@@ -346,13 +351,18 @@ int main()
           }
         }
         outFile.close();
-        cout << "Success! Results saved to 'ColorBlindnessResults.txt'" << endl;
+        cout << "Success! Results Saved To 'ColorBlindnessResults.txt'" << endl;
       } 
       else 
       {
-        cout << "Error: Could not create the output file." << endl;
+        cout << "Error: Could Not Create The Output File." << endl;
       }
     }
+    }
+    if (selectTester == 3)
+    {
+      cout << "Shutting Down..." << endl;
+      return 0;
     }
   }
     return 0;
